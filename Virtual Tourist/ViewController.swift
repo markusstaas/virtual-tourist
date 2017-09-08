@@ -23,6 +23,23 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         let mapPress = UILongPressGestureRecognizer(target: self, action: #selector(self.addAnnotation(_:)))
         mapPress.minimumPressDuration = 1.5
         mapView.addGestureRecognizer(mapPress)
+        getCoordsFromDB()
+    }
+    func getCoordsFromDB(){
+        let myData = itemsFromCoreData
+        let ct = myData.count
+        
+        for row in 0...ct-1{
+            let lat = myData[row].value(forKey: "lat")
+            let lon = myData[row].value(forKey: "long")
+            let annotation = MKPointAnnotation()
+            //annotation.title = location["title"] as? String
+            annotation.coordinate = CLLocationCoordinate2D(latitude: lat as! Double, longitude: lon as! Double)
+            mapView.addAnnotation(annotation)
+            
+        }
+        
+    
     }
     
     func addAnnotation(_ recognizer: UIGestureRecognizer){
@@ -33,12 +50,10 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         let annotation = MKPointAnnotation()
         annotation.coordinate = newCoordinates
         if recognizer.state == .ended{
-            //TO DO
             //write coords to Pin entity
             let pinLat = newCoordinates.latitude
             let pinLong = newCoordinates.longitude
-            //print(newCoordinates.longitude)
-            saveToCoreData(longitude: pinLong, latitude: pinLat)
+                        saveToCoreData(longitude: pinLong, latitude: pinLat)
         }
         self.mapView.addAnnotation(annotation)
     }
@@ -48,8 +63,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
             //if annotation is not an MKPointAnnotation (eg. MKUserLocation),
             return nil
         }
-        // TO DO
-        //Get the pins from DB
 
         let identifier = "pinAnnotation"
         if let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) {
@@ -95,14 +108,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         
         coreData.saveDatabase { (success) in
             if (success){
-                //self.tableView.reloadData()
-                //print(itemsFromCoreData)
-               let myData = itemsFromCoreData
-               let ct = myData.count
-               
-                for row in 0...ct-1{
-                    print("dfasdf")
-                }
             }
             
         }
