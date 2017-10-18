@@ -28,34 +28,36 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
     func getCoordsFromDB(){
         let myData = itemsFromCoreData
         let ct = myData.count
-        
-        for row in 0...ct-1{
-            let lat = myData[row].value(forKey: "lat")
-            let lon = myData[row].value(forKey: "long")
-            let annotation = MKPointAnnotation()
-            //annotation.title = location["title"] as? String
-            annotation.coordinate = CLLocationCoordinate2D(latitude: lat as! Double, longitude: lon as! Double)
-            mapView.addAnnotation(annotation)
-            
+        print(ct)
+        if ct > 0{
+            for row in 0...ct-1{
+                //for row in myData{
+                let lat = myData[row].value(forKey: "lat")
+                let lon = myData[row].value(forKey: "long")
+                let annotation = MKPointAnnotation()
+                //annotation.title = location["title"] as? String
+                annotation.coordinate = CLLocationCoordinate2D(latitude: lat as! Double, longitude: lon as! Double)
+                mapView.addAnnotation(annotation)
+            }
         }
-        
-    
     }
     
     func addAnnotation(_ recognizer: UIGestureRecognizer){
-        let annotations = self.mapView.annotations
-        self.mapView.removeAnnotations(annotations)
         let touchedAt = recognizer.location(in: self.mapView) // adds the location on the view it was pressed
         let newCoordinates : CLLocationCoordinate2D = mapView.convert(touchedAt, toCoordinateFrom: self.mapView) // will get coordinates
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = newCoordinates
+        let annotationPlus = MKPointAnnotation()
+        annotationPlus.coordinate = newCoordinates
+        
+        if recognizer.state == .began{
+            self.mapView.addAnnotation(annotationPlus)
+        }
         if recognizer.state == .ended{
             //write coords to Pin entity
             let pinLat = newCoordinates.latitude
             let pinLong = newCoordinates.longitude
-                        saveToCoreData(longitude: pinLong, latitude: pinLat)
+            saveToCoreData(longitude: pinLong, latitude: pinLat)
         }
-        self.mapView.addAnnotation(annotation)
+
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
@@ -72,7 +74,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
             let annotationView = MKPinAnnotationView(annotation:annotation, reuseIdentifier: identifier)
             annotationView.isEnabled = true
             //annotationView.canShowCallout = true
-            
             return annotationView
         }
     }
@@ -101,11 +102,9 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
     }
     
     func saveToCoreData(longitude: Double, latitude: Double){
-        
         let item = coreData.createManagedObject(entityName: CoreDataConnection.kItem) as! Pin
         item.lat = latitude
         item.long = longitude
-        
         coreData.saveDatabase { (success) in
             if (success){
             }
