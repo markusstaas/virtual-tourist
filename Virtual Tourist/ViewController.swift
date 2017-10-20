@@ -35,7 +35,9 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
                 let lat = myData[row].value(forKey: "lat")
                 let lon = myData[row].value(forKey: "long")
                 let annotation = MKPointAnnotation()
-                //annotation.title = location["title"] as? String
+                annotation.title = "This is the title"
+                annotation.subtitle = "this is the subtitle"
+                
                 annotation.coordinate = CLLocationCoordinate2D(latitude: lat as! Double, longitude: lon as! Double)
                 mapView.addAnnotation(annotation)
             }
@@ -69,15 +71,24 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         let identifier = "pinAnnotation"
         if let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) {
             annotationView.annotation = annotation
+            
             return annotationView
         } else {
             let annotationView = MKPinAnnotationView(annotation:annotation, reuseIdentifier: identifier)
             annotationView.isEnabled = true
-            //annotationView.canShowCallout = true
+            annotationView.canShowCallout = true
+            let btn = UIButton(type: .detailDisclosure)
+            annotationView.rightCalloutAccessoryView = btn
+
             return annotationView
         }
     }
-    
+    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        if control == view.rightCalloutAccessoryView {
+            print("Button taaped ")
+            //prepare(for: <#T##UIStoryboardSegue#>, sender: <#T##Any?#>)
+        }
+    }
     
     //This is will automatically get the latest list from the database.
     var itemsFromCoreData: [NSManagedObject] {
