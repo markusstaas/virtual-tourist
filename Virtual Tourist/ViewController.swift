@@ -86,7 +86,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         if control == view.rightCalloutAccessoryView {
             print("Button taaped ")
-            //prepare(for: <#T##UIStoryboardSegue#>, sender: <#T##Any?#>)
+           performSegue(withIdentifier: "FlickrView", sender: self)
         }
     }
     
