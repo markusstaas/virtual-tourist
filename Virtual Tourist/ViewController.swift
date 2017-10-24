@@ -24,6 +24,8 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         mapPress.minimumPressDuration = 1.5
         mapView.addGestureRecognizer(mapPress)
         getCoordsFromDB()
+        
+      
     }
     func getCoordsFromDB(){
         let myData = itemsFromCoreData
