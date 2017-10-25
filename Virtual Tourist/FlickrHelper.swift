@@ -39,7 +39,7 @@ class FlickrHelper: NSObject {
             
             /* GUARD: Was there an error? */
             guard (error == nil) else {
-                displayError("There was an error with your request: \(error)")
+                displayError("There was an error with your request: \(String(describing: error))")
                 return
             }
             
@@ -106,7 +106,7 @@ class FlickrHelper: NSObject {
                         //self.photoTitleLabel.text = photoTitle ?? "(Untitled)"
                     }
                 } else {
-                    displayError("Image does not exist at \(imageURL)")
+                    displayError("Image does not exist at \(String(describing: imageURL))")
                 }
             }
         }

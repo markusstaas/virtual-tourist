@@ -30,24 +30,17 @@ class FlickrCollectionViewController: UICollectionViewController {
                     let parsedResult: [String:AnyObject]!
                     do {
                         parsedResult = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as! [String:AnyObject]
-                        
-                        if let photosDictionary = parsedResult[Constants.FlickrResponseKeys.Photos] as? [String:AnyObject], let photoArray = photosDictionary[Constants.FlickrResponseKeys.Photo] as? [[String:AnyObject]] {
-                            
-                            let randomPhotoIndex = Int(arc4random_uniform(UInt32(photoArray.count)))
-                            let photoDictionary = photoArray[randomPhotoIndex] as [String:AnyObject]
-                            
-                            if let imageUrlString = photoDictionary[Constants.FlickrResponseKeys.MediumURL] as? String{
-                                print(imageUrlString)
-                           
-                            }
-                        }
-                        
                     }catch{
                         print("Could not parse the data")
                         return
+                    }
+                    if let photosDictionary = parsedResult[Constants.FlickrResponseKeys.Photos] as? [String:AnyObject], let photoArray = photosDictionary[Constants.FlickrResponseKeys.Photo] as? [[String:AnyObject]] {
+                        
+                        let randomPhotoIndex = Int(arc4random_uniform(UInt32(photoArray.count)))
+                        let photoDictionary = photoArray[randomPhotoIndex] as [String:AnyObject]
                         
                     }
-                    print(parsedResult)
+                   // print(parsedResult)
                 }
             }
         }
