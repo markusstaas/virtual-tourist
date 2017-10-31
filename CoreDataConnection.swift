@@ -12,14 +12,12 @@ import CoreData
 class CoreDataConnection: NSObject {
     
     static let sharedInstance = CoreDataConnection()
-    
     static let kItem = "Pin"
     static let kFilename = "Model"
     
     // MARK: - Core Data stack
     
     lazy var persistentContainer: NSPersistentContainer = {
-        
         let container = NSPersistentContainer(name: CoreDataConnection.kFilename)
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
@@ -47,33 +45,19 @@ class CoreDataConnection: NSObject {
     // MARK: - Adding More Helpers
     
     func createManagedObject( entityName: String )->NSManagedObject {
-        
-        let managedContext =
-            CoreDataConnection.sharedInstance.persistentContainer.viewContext
-        
-        let entity =
-            NSEntityDescription.entity(forEntityName: entityName,
-                                       in: managedContext)!
-        
-        let item = NSManagedObject(entity: entity,
-                                   insertInto: managedContext)
-        
+        let managedContext = CoreDataConnection.sharedInstance.persistentContainer.viewContext
+        let entity = NSEntityDescription.entity(forEntityName: entityName, in: managedContext)!
+        let item = NSManagedObject(entity: entity, insertInto: managedContext)
         return item
-        
     }
     
     
     func saveDatabase(completion:(_ result: Bool ) -> Void) {
-        
-        let managedContext =
-            CoreDataConnection.sharedInstance.persistentContainer.viewContext
-        
+        let managedContext = CoreDataConnection.sharedInstance.persistentContainer.viewContext
         do {
             try managedContext.save()
-            
             completion(true)
-            
-        } catch let error as NSError {
+        }catch let error as NSError{
             print("Could not save. \(error), \(error.userInfo)")
             completion(false)
         }
@@ -81,18 +65,12 @@ class CoreDataConnection: NSObject {
     }
     
     func deleteManagedObject( managedObject: NSManagedObject, completion:(_ result: Bool ) -> Void) {
-        
-        let managedContext =
-            CoreDataConnection.sharedInstance.persistentContainer.viewContext
-        
+        let managedContext = CoreDataConnection.sharedInstance.persistentContainer.viewContext
         managedContext.delete(managedObject)
-        
         do {
             try managedContext.save()
-            
             completion(true)
-            
-        } catch let error as NSError {
+        }catch let error as NSError{
             print("Could not save. \(error), \(error.userInfo)")
             completion(false)
         }

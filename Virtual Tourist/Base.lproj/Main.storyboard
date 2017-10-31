@@ -24,17 +24,37 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="0Yw-ZS-nOS">
                                 <rect key="frame" x="0.0" y="64" width="375" height="603"/>
                             </mapView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tap pins to delete" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="khR-UB-7v6">
+                                <rect key="frame" x="0.0" y="667" width="375" height="45"/>
+                                <color key="backgroundColor" red="1" green="0.0" blue="0.069748602085307532" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="V8G-ve-TwL"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstAttribute="trailing" secondItem="khR-UB-7v6" secondAttribute="trailing" id="2gK-3L-fdb"/>
                             <constraint firstItem="0Yw-ZS-nOS" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="4yE-jj-gBa"/>
                             <constraint firstAttribute="trailing" secondItem="0Yw-ZS-nOS" secondAttribute="trailing" id="67H-ln-7uE"/>
+                            <constraint firstItem="khR-UB-7v6" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="AT1-Oa-Xsq"/>
                             <constraint firstItem="0Yw-ZS-nOS" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="Nap-XJ-DaG"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="0Yw-ZS-nOS" secondAttribute="bottom" id="VYy-X0-qlT"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="khR-UB-7v6" secondAttribute="bottom" constant="-45" id="Yjk-ae-yLn"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="EX9-jp-cVt"/>
+                    <navigationItem key="navigationItem" id="EX9-jp-cVt">
+                        <barButtonItem key="rightBarButtonItem" title="Edit" style="plain" id="fDS-3P-Nqj">
+                            <connections>
+                                <action selector="editButtonPressed:" destination="BYZ-38-t0r" id="PYn-P2-rDI"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
+                        <outlet property="editButton" destination="fDS-3P-Nqj" id="rip-yO-5v8"/>
                         <outlet property="mapView" destination="0Yw-ZS-nOS" id="HlM-9b-gnA"/>
                         <segue destination="hk0-II-97A" kind="show" identifier="FlickrView" id="6TV-Sd-msF"/>
                     </connections>
