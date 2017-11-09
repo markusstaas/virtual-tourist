@@ -11,15 +11,21 @@ import UIKit
 private let reuseIdentifier = "Cell"
 
 class FlickrCollectionViewController: UICollectionViewController {
+    
+    var flickrLat: Double = 0.0
+    var flickrLong: Double = 0.0
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         getImagesFromFlickr()
+        
     }
     
+    
+    
     func getImagesFromFlickr(){
-        let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=df1c8e24162af5e93c1935e24018579a&lat=10.8231&lon=106.6297&extras=url_m&format=json&nojsoncallback=1"
+        let urlString = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=df1c8e24162af5e93c1935e24018579a&lat=\(flickrLat)&lon=\(flickrLong)&extras=url_m&format=json&nojsoncallback=1"
         let url = URL(string: urlString)!
         let request = URLRequest(url: url)
         
@@ -40,7 +46,7 @@ class FlickrCollectionViewController: UICollectionViewController {
                        // let photoDictionary = photoArray[randomPhotoIndex] as [String:AnyObject]
                         
                     }
-                   // print(parsedResult)
+                   print(parsedResult)
                 }
             }
         }

@@ -14,6 +14,8 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
     
     var editMode:Bool = false
     var pins = [Pin]()
+    var pinLat: Double = 0.0
+    var pinLong: Double = 0.0
     var sharedContext : NSManagedObjectContext{
         return CoreDataStackManager.sharedInstance().managedObjectContext
     }
@@ -113,6 +115,8 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
             }else{
         
         //print(view.annotation?.coordinate.latitude)
+            pinLat = view.annotation?.coordinate.latitude as Double!
+            pinLong = view.annotation?.coordinate.longitude as Double!
         performSegue(withIdentifier: "FlickrView", sender: self)
         
         }
@@ -121,7 +125,8 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "FlickrView") {
             let viewController = segue.destination as! FlickrCollectionViewController
-            //viewController.pin = selectedPin
+            viewController.flickrLat = pinLat
+            viewController.flickrLong = pinLong
         }
     }
     
