@@ -12,9 +12,11 @@ import CoreData
 
 class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDelegate  {
     
-    var coreData = CoreDataConnection.sharedInstance
     var editMode:Bool = false
-    var selectedObjectID: NSManagedObjectID?
+    var pins = [Pin]()
+    var sharedContext : NSManagedObjectContext{
+        return CoreDataStackManager.sharedInstance().managedObjectContext
+    }
    
     @IBOutlet weak var editButton: UIBarButtonItem!
     @IBOutlet weak var mapView: MKMapView!
@@ -22,10 +24,10 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
     override func viewDidLoad() {
         super.viewDidLoad()
         self.mapView.delegate = self
-        getCoordsFromDB()
         let mapPress = UILongPressGestureRecognizer(target: self, action: #selector(self.addAnnotation(_:)))
         mapPress.minimumPressDuration = 1.5
         mapView.addGestureRecognizer(mapPress)
+        showSavedPins()
     }
     
     @IBAction func editButtonPressed(_ sender: Any) {
@@ -44,28 +46,26 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         }
         
     }
-    
 
-    func getCoordsFromDB(){
-        let myData = itemsFromCoreData
-        let ct = myData.count
-
-        if ct > 0{
-            for row in 0...ct-1{
-                //for row in myData{
-                let lat = myData[row].value(forKey: "lat")
-                let lon = myData[row].value(forKey: "long")
-                let id = myData[row].objectID
-                let annotation = MKPointAnnotation()
-                annotation.title = "This is the title"
-                annotation.subtitle = "this is the subtitle"
-                annotation.coordinate = CLLocationCoordinate2D(latitude: lat as! Double, longitude: lon as! Double)
-                selectedObjectID = id
-                mapView.addAnnotation(annotation)
-                
-            }
+    func getPinsFromDB() -> [Pin]{
+        let fetchRequest=NSFetchRequest<Pin>(entityName:"Pin")
+        do {
+            return try sharedContext.fetch(fetchRequest)
+        }catch{
+            print("Could not fetch Pins")
+            return [Pin]()
         }
     }
+    
+    func showSavedPins(){
+        pins = getPinsFromDB()
+        for pin in pins{
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = pin.coordinate
+            mapView.addAnnotation(annotation)
+        }
+    }
+    
     
     func addAnnotation(_ recognizer: UIGestureRecognizer){
         let touchedAt = recognizer.location(in: self.mapView) // adds the location on the view it was pressed
@@ -77,10 +77,9 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
             self.mapView.addAnnotation(annotationPlus)
         }
         if recognizer.state == .ended{
-            //write coords to Pin entity
-            let pinLat = newCoordinates.latitude
-            let pinLong = newCoordinates.longitude
-            saveToCoreData(longitude: pinLong, latitude: pinLat)
+            let newPin = Pin(lat: annotationPlus.coordinate.latitude, long: annotationPlus.coordinate.longitude, context: sharedContext)
+            CoreDataStackManager.sharedInstance().saveContext()
+            pins.append(newPin)
         }
 
     }
@@ -93,78 +92,38 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         if let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) {
             annotationView.annotation = annotation
             return annotationView
+           
         } else {
             let annotationView = MKPinAnnotationView(annotation:annotation, reuseIdentifier: identifier)
-            annotationView.isEnabled = true
-            annotationView.canShowCallout = true
-            let btn = UIButton(type: .detailDisclosure)
-            annotationView.rightCalloutAccessoryView = btn
-
             return annotationView
         }
     }
-    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        if control == view.rightCalloutAccessoryView {
-           performSegue(withIdentifier: "FlickrView", sender: self)
-        }
-    }
-    
-    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        
-        let annotation = view.annotation
-        //let item = itemsFromCoreData[1] as! Pin
-        let item = view.annotation as! Pin
-        //let test = item.managedObjectContext?.object(with: selectedObjectID!)
-        //print("werwer \(test!)")
-        //let item = itemsFromCoreData[1]
-        coreData.deleteManagedObject(managedObject: item, completion: { (success) in
-            if (success){
-                print(annotation)
-                mapView.removeAnnotation(annotation!)
-                
-            }else{
-                print("the shit didnt work!!!")
-            }
-        })
-        //let ObjectID =
-            //deleteFromCoreData()
-            
-            //
-      
-    }
-    
-    //This is will automatically get the latest list from the database.
-    var itemsFromCoreData: [NSManagedObject] {
-        
-        get {
-            var resultArray:Array<NSManagedObject>!
-            let managedContext = coreData.persistentContainer.viewContext
-            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: CoreDataConnection.kItem)
-            fetchRequest.returnsObjectsAsFaults = false
-            do {
-                resultArray = try managedContext.fetch(fetchRequest)
 
-            } catch let error as NSError {
-                print("Could not fetch. \(error), \(error.userInfo)")
-            }
-            return resultArray
-        }
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        mapView.deselectAnnotation(view.annotation, animated: false)
         
+        if editMode{
+            for pin in pins{
+                if view.annotation?.coordinate.latitude == pin.lat && view.annotation?.coordinate.longitude == pin.long{
+                    sharedContext.delete(pin)
+                    self.mapView.removeAnnotation(view.annotation!)
+                    CoreDataStackManager.sharedInstance().saveContext()
+                    }
+                }
+            }else{
+        
+        //print(view.annotation?.coordinate.latitude)
+        performSegue(withIdentifier: "FlickrView", sender: self)
+        
+        }
     }
     
-    func saveToCoreData(longitude: Double, latitude: Double){
-        let item = coreData.createManagedObject(entityName: CoreDataConnection.kItem) as! Pin
-        item.lat = latitude
-        item.long = longitude
-        coreData.saveDatabase { (success) in
-            if (success){
-                print("Item added")
-            }
-            
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if (segue.identifier == "FlickrView") {
+            let viewController = segue.destination as! FlickrCollectionViewController
+            //viewController.pin = selectedPin
         }
-        
     }
-    
     
 }
 

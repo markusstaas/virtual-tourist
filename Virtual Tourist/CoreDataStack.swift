@@ -4,7 +4,8 @@
 //
 //  Created by Markus Staas (Lazada eLogistics Group) on 10/31/17.
 //  Copyright © 2017 Markus Staas . All rights reserved.
-//
+// 
+
 
 import Foundation
 import CoreData
@@ -12,7 +13,6 @@ import CoreData
 private let SQLITE_FILE_NAME = "Model.sqlite"
 
 class CoreDataStackManager {
-    
     
     // MARK: - Shared Instance
     
@@ -43,7 +43,7 @@ class CoreDataStackManager {
         
         print("Instantiating the managedObjectModel property")
         
-        let modelURL = Bundle.main.url(forResource: "VirtualTourist", withExtension: "momd")!
+        let modelURL = Bundle.main.url(forResource: "Model", withExtension: "momd")!
         return NSManagedObjectModel(contentsOf: modelURL)!
     }()
     
