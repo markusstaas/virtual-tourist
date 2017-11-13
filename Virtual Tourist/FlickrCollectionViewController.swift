@@ -1,5 +1,5 @@
 //
-//  FlickrCollectionViewController.swift
+//  FlickrViewController.swift
 //  Virtual Tourist
 //
 //  Created by Markus Staas on 10/20/17.
@@ -7,21 +7,38 @@
 //
 
 import UIKit
+import MapKit
+import CoreData
 
-private let reuseIdentifier = "Cell"
-
-class FlickrCollectionViewController: UICollectionViewController {
+class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource{
     
     var flickrLat: Double = 0.0
     var flickrLong: Double = 0.0
+    
+    @IBOutlet weak var mapView: MKMapView!
+    @IBOutlet weak var newCollectionButton: UIButton!
+    @IBOutlet weak var collectionView: UICollectionView!
+    var selectedPic = [IndexPath]()
+    var sharedContext: NSManagedObjectContext {
+        return CoreDataStackManager.sharedInstance().managedObjectContext
+    }
+     var fetchedResultsController:NSFetchedResultsController<Photos>!
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-        getImagesFromFlickr()
+        //let fetchRequest = NSFetchRequest<Photos>(entityName: "Photos")
+       // let photoContext = sharedContext
+       // let frc = NSFetchedResultsController<Photos>(fetchRequest: fetchRequest, managedObjectContext: photoContext, sectionNameKeyPath: nil, cacheName: nil)
+        
+        //fetchedResultsController = frc
+        
+          mapView.delegate = self
+        loadSelectedPinOnMapView()
+        collectionView.delegate = self
+        collectionView.dataSource = self
         
     }
-    
     
     
     func getImagesFromFlickr(){
@@ -40,7 +57,7 @@ class FlickrCollectionViewController: UICollectionViewController {
                         print("Could not parse the data")
                         return
                     }
-                    if let photosDictionary = parsedResult[Constants.FlickrResponseKeys.Photos] as? [String:AnyObject], let photoArray = photosDictionary[Constants.FlickrResponseKeys.Photo] as? [[String:AnyObject]] {
+                    if let photosDictionary = parsedResult[FlickrAPI.FlickrResponseKeys.Photos] as? [String:AnyObject], let photoArray = photosDictionary[FlickrAPI.FlickrResponseKeys.Photo] as? [[String:AnyObject]] {
                         
                         let randomPhotoIndex = Int(arc4random_uniform(UInt32(photoArray.count)))
                        // let photoDictionary = photoArray[randomPhotoIndex] as [String:AnyObject]
@@ -54,21 +71,12 @@ class FlickrCollectionViewController: UICollectionViewController {
         task.resume()
 
     }
-    // MARK: UICollectionViewDataSource
 
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-
-
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 12
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
-        cell.backgroundColor = .red
-        return cell
+    func loadSelectedPinOnMapView() {
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = CLLocationCoordinate2DMake(flickrLat, flickrLong)
+        mapView.centerCoordinate = annotation.coordinate
+        mapView.addAnnotation(annotation)
     }
     
 

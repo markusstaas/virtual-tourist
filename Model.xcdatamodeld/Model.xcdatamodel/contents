@@ -10,10 +10,11 @@
     <entity name="Pin" representedClassName=".Pin" syncable="YES">
         <attribute name="lat" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="long" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="pageNumber" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="photos" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Photos" inverseName="location" inverseEntity="Photos" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Pin" positionX="-63" positionY="-18" width="128" height="90"/>
         <element name="Photos" positionX="-63" positionY="0" width="128" height="120"/>
+        <element name="Pin" positionX="-63" positionY="-18" width="128" height="105"/>
     </elements>
 </model>

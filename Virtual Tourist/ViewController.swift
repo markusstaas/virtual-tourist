@@ -124,9 +124,10 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "FlickrView") {
-            let viewController = segue.destination as! FlickrCollectionViewController
+            let viewController = segue.destination as! FlickrViewController
             viewController.flickrLat = pinLat
             viewController.flickrLong = pinLong
+            
         }
     }
     
