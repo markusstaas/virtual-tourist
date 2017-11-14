@@ -13,9 +13,6 @@ import SystemConfiguration
 
 class FlickrClient: NSObject {
     
-    //var numberOfPhotoDownloaded = 0
-    
-    // Shared session
     var session: URLSession
     
     override init() {
@@ -28,15 +25,12 @@ class FlickrClient: NSObject {
     func taskForGETMethodWithParameters(_ parameters: [String : AnyObject],
                                         completionHandler: @escaping (_ result: AnyObject?, _ error: NSError?) -> Void) {
         
-        // Build the URL and configure the request
         let urlString = FlickrAPI.Constants.BaseURL + FlickrClient.escapedParameters(parameters)
         let request = URLRequest(url: URL(string: urlString)!)
         
-        // Make the request
         let task = session.dataTask(with: request, completionHandler: {
             data, response, downloadError in
             
-            // Parse the received data
             if let error = downloadError {
                 let newError = FlickrClient.errorForResponse(data, response: response, error: error as NSError)
                 completionHandler(nil, newError)
@@ -45,7 +39,6 @@ class FlickrClient: NSObject {
             }
         })
         
-        // Start the request
         task.resume()
         
     }
@@ -54,11 +47,8 @@ class FlickrClient: NSObject {
     func taskForGETMethod(_ urlString: String,
                           completionHandler: @escaping (_ result: Data?, _ error: NSError?) -> Void) {
         
-        // Create the request
-        //let request = NSMutableURLRequest(url: URL(string: urlString)!) as URLRequest
         let request = URLRequest(url: URL(string: urlString)!)
         
-        // Make the request
         let task = session.dataTask(with: request, completionHandler: {
             data, response, downloadError in
             
@@ -72,14 +62,12 @@ class FlickrClient: NSObject {
             }
         })
         
-        // Start the request
         task.resume()
         
     }
     
     // MARK: - Helpers
     
-    // Substitute the key for the value that is contained within the method name
     class func subtituteKeyInMethod(_ method: String, key: String, value: String) -> String? {
         if method.range(of: "{\(key)}") != nil {
             return method.replacingOccurrences(of: "{\(key)}", with: value)
@@ -88,7 +76,6 @@ class FlickrClient: NSObject {
         }
     }
     
-    // Given raw JSON, return a usable Foundation object
     class func parseJSONWithCompletionHandler(_ data: Data, completionHandler: (_ result: AnyObject?, _ error: NSError?) -> Void) {
         
         var parsingError: NSError?
@@ -112,20 +99,17 @@ class FlickrClient: NSObject {
     }
     
     
-    // Given a dictionary of parameters, convert to a string for a url
     class func escapedParameters(_ parameters: [String : AnyObject]) -> String {
         
         var urlVars = [String]()
         
         for (key, value) in parameters {
             if(!key.isEmpty) {
-                // Make sure that it is a string value
+          
                 let stringValue = "\(value)"
-                
-                // Escape it
+
                 let escapedValue = stringValue.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
-                
-                // Append it
+
                 urlVars += [key + "=" + "\(escapedValue!)"]
             }
             
@@ -134,10 +118,8 @@ class FlickrClient: NSObject {
         return (!urlVars.isEmpty ? "?" : "") + urlVars.joined(separator: "&")
     }
     
-    // Get error for response
     class func errorForResponse(_ data: Data?, response: URLResponse?, error: NSError) -> NSError {
         
-        // If network fails, app will crash here.
         if let parsedResult = (try? JSONSerialization.jsonObject(with: data!, options: .allowFragments)) as? [String : AnyObject] {
             
             if let status = parsedResult[FlickrAPI.FlickrResponseKeys.Status]  as? String,

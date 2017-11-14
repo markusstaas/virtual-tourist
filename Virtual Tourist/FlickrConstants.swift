@@ -8,23 +8,18 @@
 
 import Foundation
 
-// MARK: - Constants
 struct FlickrAPI{
 struct Constants {
     
-    // API Key
     static let APIKey = "df1c8e24162af5e93c1935e24018579a"
     
-    // Base URL
     static let BaseURL = "https://api.flickr.com/services/rest/"
 }
 
-// MARK: - Methods
 struct Methods {
     static let Search = "flickr.photos.search"
 }
 
-// MARK: - URL Keys
 struct FlickrParameterKeys {
     static let APIKey = "api_key"
     static let BoundingBox = "bbox"
@@ -38,13 +33,11 @@ struct FlickrParameterKeys {
     static let PerPage = "per_page"
 }
 
-// MARK: - URL Values
 struct FlickrParameterValues {
     static let JSONFormat = "json"
     static let URLMediumPhoto = "url_m"
 }
 
-// MARK: - JSON Response Keys
 struct FlickrResponseKeys {
     static let Status = "stat"
     static let Code = "code"
@@ -53,8 +46,6 @@ struct FlickrResponseKeys {
     static let Photos = "photos"
     static let Photo = "photo"
 }
-
-// MARK: - JSON Response Values
 
 struct FlickrResponseValues {
     

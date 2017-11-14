@@ -11,7 +11,6 @@ import UIKit
 class FlickrViewCell: UICollectionViewCell {
     
     @IBOutlet weak var deleteButton: UIButton!
-    
     @IBOutlet weak var photoView: UIImageView!
     
 }

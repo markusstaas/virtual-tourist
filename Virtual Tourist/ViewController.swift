@@ -71,7 +71,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
     
     
     func addAnnotation(_ recognizer: UIGestureRecognizer){
-        let touchedAt = recognizer.location(in: self.mapView) // adds the location on the view it was pressed
+        let touchedAt = recognizer.location(in: self.mapView) 
         let newCoordinates : CLLocationCoordinate2D = mapView.convert(touchedAt, toCoordinateFrom: self.mapView)
         let annotationPlus = MKPointAnnotation()
         annotationPlus.coordinate = newCoordinates
@@ -113,15 +113,13 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
                     selectedPin = pin
                     self.mapView.removeAnnotation(view.annotation!)
                     CoreDataStackManager.sharedInstance().saveContext()
-                    }
+                }
                
             }else{
-            pinLat = view.annotation?.coordinate.latitude as Double!
-            pinLong = view.annotation?.coordinate.longitude as Double!
-            selectedPin = pin
-            
-        
-         }
+                pinLat = view.annotation?.coordinate.latitude as Double!
+                pinLong = view.annotation?.coordinate.longitude as Double!
+                selectedPin = pin
+            }
         }
         performSegue(withIdentifier: "FlickrView", sender: self)
     }
