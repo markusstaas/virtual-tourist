@@ -13,7 +13,7 @@ import SystemConfiguration
 
 class FlickrClient: NSObject {
     
-    var numberOfPhotoDownloaded = 0
+    //var numberOfPhotoDownloaded = 0
     
     // Shared session
     var session: URLSession
@@ -153,24 +153,7 @@ class FlickrClient: NSObject {
         }
         return error
     }
-    
-    // MARK: - Show error alert
-    
-    func showAlert(_ message: NSError, viewController: AnyObject) {
-        let errMessage = message.localizedDescription
-        
-        let alert = UIAlertController(title: nil, message: errMessage, preferredStyle: UIAlertControllerStyle.alert)
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: { action in
-            alert.dismiss(animated: true, completion: nil)
-        }))
-        
-        viewController.present(alert, animated: true, completion: nil)
-    }
-    
-    func openURL(_ urlString: String) {
-        let url = URL(string: urlString)
-        UIApplication.shared.openURL(url!)
-    }
+
     
     // MARK: - Shared Instance
     

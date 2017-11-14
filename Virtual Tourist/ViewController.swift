@@ -14,6 +14,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
     
     var editMode:Bool = false
     var pins = [Pin]()
+    var selectedPin: Pin? = nil
     var pinLat: Double = 0.0
     var pinLong: Double = 0.0
     var sharedContext : NSManagedObjectContext{
@@ -103,23 +104,26 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
 
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         mapView.deselectAnnotation(view.annotation, animated: false)
-        
+        selectedPin = nil
+        for pin in pins{
         if editMode{
-            for pin in pins{
+            
                 if view.annotation?.coordinate.latitude == pin.lat && view.annotation?.coordinate.longitude == pin.long{
                     sharedContext.delete(pin)
+                    selectedPin = pin
                     self.mapView.removeAnnotation(view.annotation!)
                     CoreDataStackManager.sharedInstance().saveContext()
                     }
-                }
+               
             }else{
-        
-        //print(view.annotation?.coordinate.latitude)
             pinLat = view.annotation?.coordinate.latitude as Double!
             pinLong = view.annotation?.coordinate.longitude as Double!
-        performSegue(withIdentifier: "FlickrView", sender: self)
+            selectedPin = pin
+            
         
+         }
         }
+        performSegue(withIdentifier: "FlickrView", sender: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -127,7 +131,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
             let viewController = segue.destination as! FlickrViewController
             viewController.flickrLat = pinLat
             viewController.flickrLong = pinLong
-            
+            viewController.pin = selectedPin
         }
     }
     

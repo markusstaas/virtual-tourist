@@ -6,7 +6,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -48,7 +47,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="EX9-jp-cVt">
-                        <barButtonItem key="rightBarButtonItem" title="Edit" style="plain" id="fDS-3P-Nqj">
+                        <barButtonItem key="rightBarButtonItem" title="Edit" style="done" id="fDS-3P-Nqj">
                             <connections>
                                 <action selector="editButtonPressed:" destination="BYZ-38-t0r" id="PYn-P2-rDI"/>
                             </connections>
@@ -80,16 +79,16 @@
                                 <rect key="frame" x="0.0" y="64" width="375" height="128"/>
                             </mapView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="ZN3-R6-mj8">
-                                <rect key="frame" x="0.0" y="192" width="375" height="375"/>
+                                <rect key="frame" x="20" y="202" width="335" height="415"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="kc1-Bz-H5z">
-                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="itemSize" width="100" height="100"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Cell" id="dm1-kB-mOj">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="FlickrViewCell" id="dm1-kB-mOj" customClass="FlickrViewCell" customModule="Virtual_Tourist" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -100,36 +99,49 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o47-tL-ZNz">
+                                                    <rect key="frame" x="14" y="35" width="73" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                    <state key="normal" title="Delete">
+                                                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    </state>
+                                                </button>
                                             </subviews>
                                         </view>
                                         <size key="customSize" width="100" height="100"/>
+                                        <connections>
+                                            <outlet property="deleteButton" destination="o47-tL-ZNz" id="BXb-zO-1jZ"/>
+                                            <outlet property="photoView" destination="uM2-8d-C3X" id="6AM-Iy-pza"/>
+                                        </connections>
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2eW-5p-ZjL">
-                                <rect key="frame" x="16" y="617" width="343" height="50"/>
+                                <rect key="frame" x="0.0" y="617" width="375" height="50"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="etl-V9-iiW"/>
+                                    <constraint firstAttribute="height" constant="50" id="kuz-az-lBf"/>
                                 </constraints>
                                 <state key="normal" title="New Collection"/>
+                                <connections>
+                                    <action selector="newCollectionButtonPressed:" destination="E5X-dZ-52j" eventType="touchUpInside" id="A27-Aw-iwU"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="ZN3-R6-mj8" secondAttribute="trailing" id="023-t0-Bve"/>
                             <constraint firstItem="FvK-4M-Jr5" firstAttribute="leading" secondItem="duo-sY-1fs" secondAttribute="leading" id="1ge-Ak-uUh"/>
-                            <constraint firstItem="ZN3-R6-mj8" firstAttribute="leading" secondItem="duo-sY-1fs" secondAttribute="leading" id="5mX-FI-TiX"/>
+                            <constraint firstAttribute="trailing" secondItem="2eW-5p-ZjL" secondAttribute="trailing" id="5jg-M3-1vc"/>
                             <constraint firstAttribute="trailing" secondItem="FvK-4M-Jr5" secondAttribute="trailing" id="D4f-qy-izC"/>
-                            <constraint firstItem="2eW-5p-ZjL" firstAttribute="leading" secondItem="duo-sY-1fs" secondAttribute="leadingMargin" id="Laj-mS-xxS"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="2eW-5p-ZjL" secondAttribute="trailing" id="OXk-pN-bpd"/>
+                            <constraint firstItem="pDm-Kr-cLW" firstAttribute="top" secondItem="2eW-5p-ZjL" secondAttribute="bottom" id="EFU-sq-D4b"/>
                             <constraint firstItem="pDm-Kr-cLW" firstAttribute="top" secondItem="FvK-4M-Jr5" secondAttribute="bottom" constant="475" id="P6W-cK-qG1"/>
-                            <constraint firstItem="pDm-Kr-cLW" firstAttribute="top" secondItem="2eW-5p-ZjL" secondAttribute="bottom" id="Z2R-GR-wqY"/>
-                            <constraint firstItem="ZN3-R6-mj8" firstAttribute="top" secondItem="FvK-4M-Jr5" secondAttribute="bottom" id="ZQN-iZ-RVE"/>
-                            <constraint firstItem="ZN3-R6-mj8" firstAttribute="top" secondItem="FvK-4M-Jr5" secondAttribute="bottom" id="bum-IE-JBF"/>
-                            <constraint firstItem="pDm-Kr-cLW" firstAttribute="top" secondItem="ZN3-R6-mj8" secondAttribute="bottom" constant="100" id="cPu-pY-dOi"/>
-                            <constraint firstAttribute="trailing" secondItem="ZN3-R6-mj8" secondAttribute="trailing" id="sAe-RM-CCh"/>
+                            <constraint firstItem="ZN3-R6-mj8" firstAttribute="top" secondItem="FvK-4M-Jr5" secondAttribute="bottom" constant="10" id="ZQN-iZ-RVE"/>
+                            <constraint firstItem="pDm-Kr-cLW" firstAttribute="top" secondItem="ZN3-R6-mj8" secondAttribute="bottom" constant="50" id="cPu-pY-dOi"/>
+                            <constraint firstItem="ZN3-R6-mj8" firstAttribute="leading" secondItem="duo-sY-1fs" secondAttribute="leading" constant="20" symbolic="YES" id="egb-uh-ewc"/>
+                            <constraint firstAttribute="trailing" secondItem="ZN3-R6-mj8" secondAttribute="trailing" constant="20" symbolic="YES" id="orQ-qJ-OoY"/>
                             <constraint firstItem="FvK-4M-Jr5" firstAttribute="top" secondItem="Yht-IS-x8G" secondAttribute="bottom" id="uye-V4-gBE"/>
+                            <constraint firstItem="2eW-5p-ZjL" firstAttribute="leading" secondItem="duo-sY-1fs" secondAttribute="leading" id="znO-7t-wa0"/>
                         </constraints>
                     </view>
                     <connections>
@@ -140,7 +152,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qP5-kT-hsK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1276" y="125"/>
+            <point key="canvasLocation" x="1276" y="124.58770614692655"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="5O8-8c-uBg">

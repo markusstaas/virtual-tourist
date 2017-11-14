@@ -16,7 +16,7 @@ extension FlickrClient {
         
         var randomPageNumber: Int = 1
         
-        if let numberPages = pin.pageNumber.intValue {
+        if let numberPages = pin.pageNumber?.intValue {
             if numberPages > 0 {
                 let pageLimit = min(numberPages, 20)
                 randomPageNumber = Int(arc4random_uniform(UInt32(pageLimit))) + 1 }
@@ -50,8 +50,6 @@ extension FlickrClient {
                     
                     pin.pageNumber = numberOfPhotoPages as NSNumber?
                     
-                    self.numberOfPhotoDownloaded = photosArray.count
-                    
                     // Dictionary with photos
                     for photoDictionary in photosArray {
                         
@@ -61,14 +59,9 @@ extension FlickrClient {
                         // Create the Photos model
                         let newPhoto = Photos(photoURL: photoURLString, pin: pin, context: self.sharedContext)
                         
-                        
                         // Download photo by url
                         self.downloadPhotoImage(newPhoto, completionHandler: {
                             success, error in
-                            
-                            //print("Downloading photo by URL - \(success): \(error)")
-                            
-                            self.numberOfPhotoDownloaded-=1
                             
                             // Posting NSNotifications
                             NotificationCenter.default.post(name: Notification.Name(rawValue: "downloadPhotoImage.done"), object: nil)

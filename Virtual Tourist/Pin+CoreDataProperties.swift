@@ -18,7 +18,7 @@ extension Pin {
 
     @NSManaged public var lat: Double
     @NSManaged public var long: Double
-    @NSManaged public var pageNumber: Int32
+    @NSManaged public var pageNumber: NSNumber?
     @NSManaged public var photos: Photos?
 
 }
