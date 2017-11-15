@@ -2,43 +2,64 @@
 //  Photos+CoreDataClass.swift
 //  Virtual Tourist
 //
-//  Created by Markus Staas (Lazada eLogistics Group) on 11/9/17.
+//  Created by Markus Staas (Lazada eLogistics Group) on 11/15/17.
 //  Copyright © 2017 Markus Staas . All rights reserved.
 //
 //
-import UIKit
+
 import Foundation
 import CoreData
+import MapKit
 
-
+@objc(Photos)
 public class Photos: NSManagedObject {
+    
     var image: UIImage? {
         
-        if let filePath = photoPath {
+        if let filePath = filePath {
+            
+            // Check to see if there's an error downloading the images for each Pin
+            if filePath == "error" {
+                return UIImage(named: "404.jpg")
+            }
+            
+            // Get the file path
             let fileName = (filePath as NSString).lastPathComponent
             let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
             let pathArray = [dirPath, fileName]
             let fileURL = NSURL.fileURL(withPathComponents: pathArray)
+            
             return UIImage(contentsOfFile: fileURL!.path)
         }
         return nil
         
     }
+    
+    // MARK: - Init model
     override init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?) {
         super.init(entity: entity, insertInto: context)
     }
     
     init(photoURL: String, pin: Pin, context: NSManagedObjectContext){
+        
         let entity = NSEntityDescription.entity(forEntityName: "Photos", in: context)!
         super.init(entity: entity, insertInto: context)
-        self.photoURL = photoURL
-        self.location = pin
+        self.url = photoURL
+        self.pin = pin
+        print("init from Photos.swift\(url)")
+        
     }
-
+    
+    //MARK: - Delete file when deleting a managed object
+    
+    // Explicitely deletes the underlying files
     override public func prepareForDeletion(){
         super.prepareForDeletion()
-        if photoPath != nil{
-            let fileName = (photoPath! as NSString).lastPathComponent
+        
+        if filePath != nil{
+            // Delete the associated image file when the Photos managed object is deleted.
+            let fileName = (filePath! as NSString).lastPathComponent
+            
             let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
             let pathArray = [dirPath, fileName]
             let fileURL = NSURL.fileURL(withPathComponents: pathArray)!
@@ -46,9 +67,10 @@ public class Photos: NSManagedObject {
             do {
                 try FileManager.default.removeItem(at: fileURL)
             } catch let error as NSError {
-                print("Error - \(error)")
+                print("Error from prepareForDeletion - \(error)")
             }
-        } else { print("Filepath empty")}
+        } else { print("filepath is empty")}
     }
+    
 
 }

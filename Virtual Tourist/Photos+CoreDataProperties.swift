@@ -2,7 +2,7 @@
 //  Photos+CoreDataProperties.swift
 //  Virtual Tourist
 //
-//  Created by Markus Staas (Lazada eLogistics Group) on 11/9/17.
+//  Created by Markus Staas (Lazada eLogistics Group) on 11/15/17.
 //  Copyright © 2017 Markus Staas . All rights reserved.
 //
 //
@@ -17,10 +17,10 @@ extension Photos {
         return NSFetchRequest<Photos>(entityName: "Photos")
     }
 
-    @NSManaged public var photoID: String?
-    @NSManaged public var photoTitle: String?
-    @NSManaged public var photoURL: String?
-    @NSManaged public var photoPath: String?
-    @NSManaged public var location: Pin?
+    @NSManaged public var filePath: String?
+    @NSManaged public var id: String?
+    @NSManaged public var title: String?
+    @NSManaged public var url: String?
+    @NSManaged public var pin: Pin?
 
 }

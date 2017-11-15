@@ -12,6 +12,7 @@ import CoreData
 
 class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResultsControllerDelegate, UICollectionViewDelegate, UICollectionViewDataSource{
     var pin: Pin? = nil
+    var photo: Photos? = nil
     var flickrLat: Double = 0.0
     var flickrLong: Double = 0.0
     
@@ -19,44 +20,42 @@ class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResult
     @IBOutlet weak var newCollectionButton: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
     var selectedPic = [IndexPath]()
-    var isDeleting = false
+    var photoRemoval = false
     
     var sharedContext: NSManagedObjectContext {
         return CoreDataStackManager.sharedInstance().managedObjectContext
     }
     var fetchedResultsController:NSFetchedResultsController<Photos>!
-    
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(pin!)
         let fetchRequest = NSFetchRequest<Photos>(entityName: "Photos")
-        let photoContext = sharedContext
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "photoURL", ascending: true)]
-       
-       
-        let fetchrc = NSFetchedResultsController<Photos>(fetchRequest: fetchRequest, managedObjectContext: photoContext, sectionNameKeyPath: nil, cacheName: nil)
-        fetchedResultsController = fetchrc
-        
+        let NOC = sharedContext
+        //fetchRequest.predicate = NSPredicate(format: "pin == %@", self.pin!)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        let frc = NSFetchedResultsController<Photos>(fetchRequest: fetchRequest, managedObjectContext: NOC, sectionNameKeyPath: nil, cacheName: nil)
+        fetchedResultsController = frc
         mapView.delegate = self
+        // Load the map
         loadSelectedPinOnMapView()
         collectionView.delegate = self
         collectionView.dataSource = self
-
+        self.collectionView.reloadData()
+        // Perform the fetch
         do {
             try fetchedResultsController.performFetch()
+            print("Fetching")
         } catch let error as NSError {
             print("\(error)")
         }
         fetchedResultsController.delegate = self
         NotificationCenter.default.addObserver(self, selector: #selector(FlickrViewController.photoReload(_:)), name: NSNotification.Name(rawValue: "downloadPhotoImage.done"), object: nil)
-    reloadAll()
     }
     // Inserting dispatch_async to ensure the closure always run in the main thread
+    
     func photoReload(_ notification: Notification) {
         DispatchQueue.main.async(execute: {
             self.collectionView.reloadData()
-            
         })
     }
     fileprivate func reFetch() {
@@ -68,24 +67,18 @@ class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResult
     }
     
     @IBAction func newCollectionButtonPressed(_ sender: Any) {
-        
-        if isDeleting == true
+        if photoRemoval == true
         {
           for indexPath in selectedPic {
-                
                 let photo = fetchedResultsController.object(at: indexPath)
-                
                 sharedContext.delete(photo)
-                
             }
            selectedPic.removeAll()
-            
             CoreDataStackManager.sharedInstance().saveContext()
-            
             reFetch()
             collectionView.reloadData()
             newCollectionButton.setTitle("New Collection", for: UIControlState())
-            isDeleting = false
+            photoRemoval = false
         } else {
             reloadAll()
         }
@@ -94,13 +87,11 @@ class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResult
     }
     
     func reloadAll(){
-        
         for photo in fetchedResultsController.fetchedObjects! {
             sharedContext.delete(photo)
         }
         
         CoreDataStackManager.sharedInstance().saveContext()
-        
         FlickrClient.sharedInstance().downloadPhotosForPin(pin!, completionHandler: {
             success, error in
             
@@ -124,16 +115,15 @@ class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResult
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int{
-        
-        let sectionInfo = self.fetchedResultsController.sections![section]
-        return sectionInfo.numberOfObjects
+        //let sectionInfo = self.fetchedResultsController.sections![section]
+        //print("Number of photos returned from fetchedResultsController #\(sectionInfo.numberOfObjects)")
+        return 20
+            //sectionInfo.numberOfObjects
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath){
     
-            
             let cell = collectionView.cellForItem(at: indexPath) as! FlickrViewCell
-            
             if let index = selectedPic.index(of: indexPath){
                 selectedPic.remove(at: index)
                 cell.deleteButton.isHidden = true
@@ -142,44 +132,32 @@ class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResult
                 cell.deleteButton.isHidden = false
                 newCollectionButton.setTitle("New Collection", for: UIControlState())
             }
-            
             if selectedPic.count > 0 {
                 if selectedPic.count == 1{
                     newCollectionButton.setTitle("Delete \(selectedPic.count) photo", for: UIControlState())
                 } else {
                     newCollectionButton.setTitle("Delete \(selectedPic.count) photos", for: UIControlState())
                 }
-                isDeleting = true
+                photoRemoval = true
             } else{
                 newCollectionButton.setTitle("New Collection", for: UIControlState())
-                isDeleting = false
+                photoRemoval = false
             }
-            
-        
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell{
-        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FlickrViewCell", for: indexPath) as! FlickrViewCell
         let photo = fetchedResultsController.object(at: indexPath)
-        
         cell.photoView.image = photo.image
-        
         cell.deleteButton.isHidden = true
         cell.deleteButton.layer.setValue(indexPath, forKey: "indexPath")
-        
         cell.deleteButton.addTarget(self, action: #selector(FlickrViewController.deletePhoto(_:)), for: UIControlEvents.touchUpInside)
-        
         return cell
     }
     
     func deletePhoto(_ sender: UIButton){
-        
         let photoIndex = sender.layer.value(forKey: "indexPath") as! IndexPath
-        
         let photo = fetchedResultsController.object(at: photoIndex)
-        
         if let index = selectedPic.index(of: photoIndex){
             selectedPic.remove(at: index)
         }
@@ -188,7 +166,6 @@ class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResult
         reFetch()
         collectionView.reloadData()
     }
-    
     
     func loadSelectedPinOnMapView() {
         let annotation = MKPointAnnotation()

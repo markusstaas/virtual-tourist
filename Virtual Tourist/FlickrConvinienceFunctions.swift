@@ -26,8 +26,8 @@ extension FlickrClient {
             FlickrAPI.FlickrParameterKeys.APIKey : FlickrAPI.Constants.APIKey as AnyObject,
             FlickrAPI.FlickrParameterKeys.Format : FlickrAPI.FlickrParameterValues.JSONFormat as AnyObject,
             FlickrAPI.FlickrParameterKeys.NoJSONCallback : 1 as AnyObject,
-            FlickrAPI.FlickrParameterKeys.Latitude : pin.lat as AnyObject,
-            FlickrAPI.FlickrParameterKeys.Longitude : pin.long as AnyObject,
+            FlickrAPI.FlickrParameterKeys.Latitude : pin.latitude as AnyObject,
+            FlickrAPI.FlickrParameterKeys.Longitude : pin.longitude as AnyObject,
             FlickrAPI.FlickrParameterKeys.Extras : FlickrAPI.FlickrParameterValues.URLMediumPhoto as AnyObject,
             FlickrAPI.FlickrParameterKeys.Page : randomPageNumber as AnyObject,
             FlickrAPI.FlickrParameterKeys.PerPage : 21 as AnyObject
@@ -73,14 +73,14 @@ extension FlickrClient {
     }
 func downloadPhotoImage(_ photo: Photos, completionHandler: @escaping (_ success: Bool, _ error: NSError?) -> Void) {
         
-        let imageURLString = photo.photoURL
+        let imageURLString = photo.url
         
         taskForGETMethod(imageURLString!, completionHandler: {
             result, error in
             
             if let error = error {
                 print("Error from downloading images \(error.localizedDescription )")
-                photo.photoPath = "error"
+                photo.filePath = "error"
                 completionHandler(false, error)
                 
             } else {
@@ -93,7 +93,7 @@ func downloadPhotoImage(_ photo: Photos, completionHandler: @escaping (_ success
                     let fileURL = NSURL.fileURL(withPathComponents: pathArray)!
                     FileManager.default.createFile(atPath: fileURL.path, contents: result, attributes: nil)
                     
-                    photo.photoPath = fileURL.path
+                    photo.filePath = fileURL.path
                     
                     completionHandler(true, nil)
                 }

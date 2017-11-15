@@ -23,6 +23,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
    
     @IBOutlet weak var editButton: UIBarButtonItem!
     @IBOutlet weak var mapView: MKMapView!
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,6 +84,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
             let newPin = Pin(lat: annotationPlus.coordinate.latitude, long: annotationPlus.coordinate.longitude, context: sharedContext)
             CoreDataStackManager.sharedInstance().saveContext()
             pins.append(newPin)
+            FlickrClient.sharedInstance().downloadPhotosForPin(newPin) { (success, error) in print("downloadPhotosForPin is success:\(success) - error:\(String(describing: error))") }
         }
 
     }
@@ -102,26 +104,35 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         }
     }
 
+   
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        mapView.deselectAnnotation(view.annotation, animated: false)
+        
+        mapView.deselectAnnotation(view.annotation, animated: true)
+        guard let annotation = view.annotation else { /* no annotation */ return }
         selectedPin = nil
-        for pin in pins{
-        if editMode{
-            
-                if view.annotation?.coordinate.latitude == pin.lat && view.annotation?.coordinate.longitude == pin.long{
-                    sharedContext.delete(pin)
-                    selectedPin = pin
-                    self.mapView.removeAnnotation(view.annotation!)
-                    CoreDataStackManager.sharedInstance().saveContext()
-                }
-               
-            }else{
-                pinLat = view.annotation?.coordinate.latitude as Double!
-                pinLong = view.annotation?.coordinate.longitude as Double!
+        
+        for pin in pins {
+            if annotation.coordinate.latitude == pin.latitude && annotation.coordinate.longitude == pin.longitude {
                 selectedPin = pin
+                if editMode {
+                    print("Deleting pin - verify core data is deleting as well")
+                    sharedContext.delete(selectedPin!)
+                    
+                    // Deleting selected pin on map
+                    self.mapView.removeAnnotation(annotation)
+                    
+                    // Save the chanages to core data
+                    CoreDataStackManager.sharedInstance().saveContext()
+                    
+                } else {
+                    
+                    pinLat = view.annotation?.coordinate.latitude as Double!
+                    pinLong = view.annotation?.coordinate.longitude as Double!
+                    // Move to the Phone Album View Controller
+                    self.performSegue(withIdentifier: "FlickrView", sender: nil)
+                }
             }
         }
-        performSegue(withIdentifier: "FlickrView", sender: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -130,6 +141,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
             viewController.flickrLat = pinLat
             viewController.flickrLong = pinLong
             viewController.pin = selectedPin
+            print(selectedPin)
         }
     }
     
