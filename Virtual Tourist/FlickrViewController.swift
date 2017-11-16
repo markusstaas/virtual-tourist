@@ -21,7 +21,6 @@ class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResult
     @IBOutlet weak var collectionView: UICollectionView!
     var selectedPic = [IndexPath]()
     var photoRemoval = false
-    
     var sharedContext: NSManagedObjectContext {
         return CoreDataStackManager.sharedInstance().managedObjectContext
     }
@@ -78,8 +77,6 @@ class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResult
         } else {
             reloadAll()
         }
-        
-        
     }
     
     func reloadAll(){
@@ -167,9 +164,3 @@ class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResult
         mapView.camera.altitude = 15000
     }
 }
-
-    
-    
-    
-
-

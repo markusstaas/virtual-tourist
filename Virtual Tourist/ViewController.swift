@@ -69,7 +69,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         }
     }
     
-    
     func addAnnotation(_ recognizer: UIGestureRecognizer){
         let touchedAt = recognizer.location(in: self.mapView) 
         let newCoordinates : CLLocationCoordinate2D = mapView.convert(touchedAt, toCoordinateFrom: self.mapView)
@@ -96,7 +95,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
         if let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) {
             annotationView.annotation = annotation
             return annotationView
-           
         } else {
             let annotationView = MKPinAnnotationView(annotation:annotation, reuseIdentifier: identifier)
             return annotationView
@@ -105,9 +103,9 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
 
    
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        
+
         mapView.deselectAnnotation(view.annotation, animated: true)
-        guard let annotation = view.annotation else { /* no annotation */ return }
+        guard let annotation = view.annotation else { return }
         selectedPin = nil
         
         for pin in pins {
@@ -117,7 +115,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
                     sharedContext.delete(selectedPin!)
                     self.mapView.removeAnnotation(annotation)
                     CoreDataStackManager.sharedInstance().saveContext()
-                    
                 } else {
                     pinLat = view.annotation?.coordinate.latitude as Double!
                     pinLong = view.annotation?.coordinate.longitude as Double!
@@ -133,11 +130,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
             viewController.flickrLat = pinLat
             viewController.flickrLong = pinLong
             viewController.pin = selectedPin
-            print(selectedPin)
         }
     }
     
 }
-
-
-
