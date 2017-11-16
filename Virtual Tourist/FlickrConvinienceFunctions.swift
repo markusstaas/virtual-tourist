@@ -56,7 +56,7 @@ extension FlickrClient {
                         self.downloadPhotoImage(newPhoto, completionHandler: {
                             success, error in
                             
-                            NotificationCenter.default.post(name: Notification.Name(rawValue: "downloadPhotoImage.done"), object: nil)
+                            NotificationCenter.default.post(name: Notification.Name(rawValue: "Finalized Download"), object: nil)
                             DispatchQueue.main.async(execute: {
                                 CoreDataStackManager.sharedInstance().saveContext()
                             })

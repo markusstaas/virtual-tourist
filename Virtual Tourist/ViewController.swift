@@ -23,7 +23,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
    
     @IBOutlet weak var editButton: UIBarButtonItem!
     @IBOutlet weak var mapView: MKMapView!
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -115,20 +114,13 @@ class ViewController: UIViewController, MKMapViewDelegate, UIGestureRecognizerDe
             if annotation.coordinate.latitude == pin.latitude && annotation.coordinate.longitude == pin.longitude {
                 selectedPin = pin
                 if editMode {
-                    print("Deleting pin - verify core data is deleting as well")
                     sharedContext.delete(selectedPin!)
-                    
-                    // Deleting selected pin on map
                     self.mapView.removeAnnotation(annotation)
-                    
-                    // Save the chanages to core data
                     CoreDataStackManager.sharedInstance().saveContext()
                     
                 } else {
-                    
                     pinLat = view.annotation?.coordinate.latitude as Double!
                     pinLong = view.annotation?.coordinate.longitude as Double!
-                    // Move to the Phone Album View Controller
                     self.performSegue(withIdentifier: "FlickrView", sender: nil)
                 }
             }

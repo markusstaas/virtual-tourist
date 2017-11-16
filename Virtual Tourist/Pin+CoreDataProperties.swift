@@ -20,7 +20,6 @@ extension Pin {
     @NSManaged public var latitude: Double
     @NSManaged public var longitude: Double
     @NSManaged public var pageNumber: NSNumber?
-    @NSManaged public var pinTitle: String?
     @NSManaged public var photos: Photos?
 
 }

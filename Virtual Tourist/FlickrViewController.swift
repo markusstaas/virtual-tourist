@@ -30,28 +30,24 @@ class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResult
     override func viewDidLoad() {
         super.viewDidLoad()
         let fetchRequest = NSFetchRequest<Photos>(entityName: "Photos")
-        let NOC = sharedContext
-        //fetchRequest.predicate = NSPredicate(format: "pin == %@", self.pin!)
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        let frc = NSFetchedResultsController<Photos>(fetchRequest: fetchRequest, managedObjectContext: NOC, sectionNameKeyPath: nil, cacheName: nil)
-        fetchedResultsController = frc
+        fetchRequest.predicate = NSPredicate(format: "pin == %@", self.pin!)
+        fetchRequest.sortDescriptors = []
+        let fetcher = NSFetchedResultsController<Photos>(fetchRequest: fetchRequest, managedObjectContext: sharedContext, sectionNameKeyPath: nil, cacheName: nil)
+        fetchedResultsController = fetcher
         mapView.delegate = self
-        // Load the map
         loadSelectedPinOnMapView()
         collectionView.delegate = self
         collectionView.dataSource = self
         self.collectionView.reloadData()
-        // Perform the fetch
+        
         do {
             try fetchedResultsController.performFetch()
-            print("Fetching")
         } catch let error as NSError {
             print("\(error)")
         }
         fetchedResultsController.delegate = self
-        NotificationCenter.default.addObserver(self, selector: #selector(FlickrViewController.photoReload(_:)), name: NSNotification.Name(rawValue: "downloadPhotoImage.done"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(FlickrViewController.photoReload(_:)), name: NSNotification.Name(rawValue: "Finalized Download"), object: nil)
     }
-    // Inserting dispatch_async to ensure the closure always run in the main thread
     
     func photoReload(_ notification: Notification) {
         DispatchQueue.main.async(execute: {
@@ -94,7 +90,6 @@ class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResult
         CoreDataStackManager.sharedInstance().saveContext()
         FlickrClient.sharedInstance().downloadPhotosForPin(pin!, completionHandler: {
             success, error in
-            
             if success {
                 DispatchQueue.main.async(execute: {
                     CoreDataStackManager.sharedInstance().saveContext()
@@ -102,7 +97,6 @@ class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResult
             } else {
                 DispatchQueue.main.async(execute: {
                     print("error downloading a new set of photos")
-                    
                 })
             }
             DispatchQueue.main.async(execute: {
@@ -115,10 +109,8 @@ class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResult
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int{
-        //let sectionInfo = self.fetchedResultsController.sections![section]
-        //print("Number of photos returned from fetchedResultsController #\(sectionInfo.numberOfObjects)")
-        return 20
-            //sectionInfo.numberOfObjects
+        let sectionInfo = self.fetchedResultsController.sections![section]
+        return sectionInfo.numberOfObjects
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath){
@@ -172,6 +164,7 @@ class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResult
         annotation.coordinate = CLLocationCoordinate2DMake(flickrLat, flickrLong)
         mapView.centerCoordinate = annotation.coordinate
         mapView.addAnnotation(annotation)
+        mapView.camera.altitude = 15000
     }
 }
 
