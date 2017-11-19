@@ -27,9 +27,7 @@ public class Photos: NSManagedObject {
         }
         return nil
     }
-    override init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?) {
-        super.init(entity: entity, insertInto: context)
-    }
+
     
     init(photoURL: String, pin: Pin, context: NSManagedObjectContext){
         let entity = NSEntityDescription.entity(forEntityName: "Photos", in: context)!
@@ -53,6 +51,9 @@ public class Photos: NSManagedObject {
                 print("\(error)")
             }
         } else { print("Error: No filepath")}
+    }
+    override init(entity: NSEntityDescription, insertInto context: NSManagedObjectContext?) {
+        super.init(entity: entity, insertInto: context)
     }
     
 

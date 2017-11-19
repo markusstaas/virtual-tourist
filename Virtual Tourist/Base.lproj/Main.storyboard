@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="bL5-Th-6gE">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="17B46a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="bL5-Th-6gE">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -91,10 +92,13 @@
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="FlickrViewCell" id="dm1-kB-mOj" customClass="FlickrViewCell" customModule="Virtual_Tourist" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="MF8-PN-UhZ">
+                                                    <rect key="frame" x="8" y="8" width="84" height="84"/>
+                                                </activityIndicatorView>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uM2-8d-C3X">
                                                     <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -109,8 +113,15 @@
                                                 </button>
                                             </subviews>
                                         </view>
+                                        <constraints>
+                                            <constraint firstAttribute="bottomMargin" secondItem="MF8-PN-UhZ" secondAttribute="bottom" id="8Rp-0r-PrE"/>
+                                            <constraint firstItem="MF8-PN-UhZ" firstAttribute="leading" secondItem="dm1-kB-mOj" secondAttribute="leadingMargin" id="9yA-RW-vpr"/>
+                                            <constraint firstItem="MF8-PN-UhZ" firstAttribute="top" secondItem="dm1-kB-mOj" secondAttribute="topMargin" id="IoO-0F-Bk1"/>
+                                            <constraint firstAttribute="trailingMargin" secondItem="MF8-PN-UhZ" secondAttribute="trailing" id="fVu-RE-bVw"/>
+                                        </constraints>
                                         <size key="customSize" width="100" height="100"/>
                                         <connections>
+                                            <outlet property="activityIndicator" destination="MF8-PN-UhZ" id="Ih0-gZ-6b0"/>
                                             <outlet property="deleteButton" destination="o47-tL-ZNz" id="BXb-zO-1jZ"/>
                                             <outlet property="photoView" destination="uM2-8d-C3X" id="6AM-Iy-pza"/>
                                         </connections>
@@ -159,7 +170,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="bL5-Th-6gE" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="wc9-tk-qEr">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="wc9-tk-qEr">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
