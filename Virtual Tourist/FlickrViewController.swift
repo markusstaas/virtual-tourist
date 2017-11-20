@@ -137,7 +137,8 @@ class FlickrViewController: UIViewController, MKMapViewDelegate, NSFetchedResult
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell{
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FlickrViewCell", for: indexPath) as! FlickrViewCell
         let photo = fetchedResultsController.object(at: indexPath)
-        cell.photoView.image = photo.image
+        
+        cell.photoView.image = photo.imageBinary
         cell.deleteButton.isHidden = true
         cell.deleteButton.layer.setValue(indexPath, forKey: "indexPath")
         cell.deleteButton.addTarget(self, action: #selector(FlickrViewController.deletePhoto(_:)), for: UIControlEvents.touchUpInside)

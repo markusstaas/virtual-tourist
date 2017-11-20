@@ -79,32 +79,22 @@ func downloadPhotoImage(_ photo: Photos, completionHandler: @escaping (_ success
             result, error in
             
             if let error = error {
-                print("Error from downloading images \(error.localizedDescription )")
-                photo.filePath = "error"
+                print("Error downloading images \(error.localizedDescription )")
                 completionHandler(false, error)
                 
             } else {
                 
                 if let result = result {
-                    
-                    let fileName = (imageURLString! as NSString).lastPathComponent
-                    let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-                    let pathArray = [dirPath, fileName]
-                    let fileURL = NSURL.fileURL(withPathComponents: pathArray)!
-                    FileManager.default.createFile(atPath: fileURL.path, contents: result, attributes: nil)
-                    
-                    photo.filePath = fileURL.path
-                    
-                    completionHandler(true, nil)
+                    photo.imageData = result
+                    completionHandler(true, nil) 
                 }
             }
         })
     }
     
+
     
     var sharedContext: NSManagedObjectContext {
         return CoreDataStackManager.sharedInstance().managedObjectContext
     }
-    
-    
 }
